@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Calculette = () => {
+    const[total, setTotal] =useState("");
 
     const clickOnButton = (e) => {
-        console.log(e.target.innerHTML);
+        setTotal(total+e.target.innerHTML);
     }
  
   return <>
     <div id="block_calculatrice">
       <div id="barre_total">
-        <input id="input_total" type="text" />
+        <input id="input_total" type="text" value={total}/>
       </div>
       <div id="premiere_ligne">
         <button className="boutton_ce" onClick={clickOnButton}>CE</button>
