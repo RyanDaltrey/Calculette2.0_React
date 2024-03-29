@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 const Calculette = () => {
     const[total, setTotal] =useState("");
+    const[random, setRandom] = useState(0.0);
+    const[currentKey, setCurrentKey]= useState("")
     let reg = new RegExp("^[\\d\\W]+$");
 
+        const registerKeyPress = useCallback((e) => {
+            setRandom(Math.random());
+            setCurrentKey(e.key);
+
+        })
     const clickOnButton = (e) => {
         setTotal(total+e.target.innerHTML);
     }
 
     const calc = () => {
         if (total != "") {
-         setTotal(eval(total));
+         setTotal(eval(total).toString());
         }
     }
 
@@ -23,28 +30,32 @@ const Calculette = () => {
     const deleteTotal = () => {
         setTotal(total.slice(0,-1));
     }
+
+    useEffect(() => {
+        switch (currentKey){
+            case "Enter":
+                calc(total)
+                break;
+            case "Backspace":
+                deleteTotal()
+                break;
+               case "Delete":
+                resetTotal();
+                break;
+            default:
+                if (reg.test(currentKey)){
+                    setTotal(total + currentKey)
+                }
+                break;    
+        }
+
+    }, [random])
  
     useEffect ( () => {
-        document.addEventListener("keyup", (e) =>{
-            switch (e.key){
-                case "Enter":
-                    calc(total)
-                    break;
-                case "Backspace":
-                    deleteTotal()
-                    break;
-                   case "Delete":
-                    resetTotal();
-                    break;
-                default:
-                    if (reg.test(e.key)){
-                        setTotal(total + e.key)
-                    }
-                    break;    
-            }
-        })
+        document.addEventListener("keyup", registerKeyPress)
+    },[])
 
-    }, [])
+
   return <>
     <div id="block_calculatrice">
       <div id="barre_total">
